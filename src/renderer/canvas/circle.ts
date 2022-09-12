@@ -5,12 +5,12 @@ export class Circle extends Drawer {
 	constructor(origin: Vector2, radius: number, color: string) {
 		super();
 
-		Drawer.ctx.beginPath();
-		Drawer.ctx.arc(origin.x, origin.y * -1, radius, 0, 2 * Math.PI);
-		Drawer.ctx.strokeStyle = color;
-		Drawer.ctx.fillStyle = color;
-		Drawer.ctx.fill();
-		Drawer.ctx.stroke();
-		Drawer.ctx.closePath();
+		Drawer._ctx.beginPath();
+		Drawer._ctx.arc(origin.x, origin.y * -1, radius, 0, 2 * Math.PI);
+		Drawer._ctx.strokeStyle = color;
+		Drawer._ctx.fillStyle = color;
+		Drawer._ctx.fill();
+		Drawer._ctx.stroke();
+		Drawer._ctx.closePath();
 	}
 }

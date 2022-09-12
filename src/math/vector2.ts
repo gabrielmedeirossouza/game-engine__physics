@@ -145,12 +145,6 @@ export class Vector2 {
 		return this.x === other.x && this.y === other.y;
 	}
 
-	public Normalize(): void {
-		const { magnitude    } = this;
-		this._x /= magnitude;
-		this._y /= magnitude;
-	}
-
 	public ToString(): string {
 		return `(${this.x}, ${this.y})`;
 	}

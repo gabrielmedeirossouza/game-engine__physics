@@ -1,5 +1,5 @@
 export abstract class GameBehavior {
-	protected deltaTime = 0;
+	protected _deltaTime = 0;
 
 	private _oldTime = 0;
 
@@ -16,7 +16,7 @@ export abstract class GameBehavior {
 	public AfterUpdate?(): void;
 
 	private _Update(currentTime: number): void {
-		this.deltaTime = currentTime - this._oldTime;
+		this._deltaTime = currentTime - this._oldTime;
 		this._oldTime = currentTime;
 
 		this.BeforeUpdate?.();

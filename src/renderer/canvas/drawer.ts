@@ -1,27 +1,27 @@
 export class Drawer {
 	public static scalar = 50;
 
-	protected static canvas: HTMLCanvasElement;
+	protected static _ctx: CanvasRenderingContext2D;
 
-	protected static ctx: CanvasRenderingContext2D;
+	protected static _canvas: HTMLCanvasElement;
 
 	static {
-		this.canvas = document.querySelector('canvas')!;
+		this._canvas = document.querySelector('canvas')!;
 
-		if (!this.canvas) {
+		if (!this._canvas) {
 			throw new Error('No canvas element found');
 		}
 
-		this.canvas.width = window.innerWidth;
-		this.canvas.height = window.innerHeight;
-		this.ctx = this.canvas.getContext('2d', { willReadFrequently: true })!;
-		this.ctx.imageSmoothingQuality = "high";
-		this.ctx.translate(this.canvas.width / 2, this.canvas.height / 2);
+		this._canvas.width = window.innerWidth;
+		this._canvas.height = window.innerHeight;
+		this._ctx = this._canvas.getContext('2d', { willReadFrequently: true })!;
+		this._ctx.imageSmoothingQuality = "high";
+		this._ctx.translate(this._canvas.width / 2, this._canvas.height / 2);
 
 		window.addEventListener('resize', () => {
-			this.canvas.width = window.innerWidth;
-			this.canvas.height = window.innerHeight;
-			this.ctx.translate(this.canvas.width / 2, this.canvas.height / 2);
+			this._canvas.width = window.innerWidth;
+			this._canvas.height = window.innerHeight;
+			this._ctx.translate(this._canvas.width / 2, this._canvas.height / 2);
 		});
 	}
 }

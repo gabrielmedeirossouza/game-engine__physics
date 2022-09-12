@@ -1,8 +1,8 @@
-import { Vector2 } from "./math";
+// import { Vector2 } from "./math";
 import { Canvas } from "./renderer";
 import { Particle, Force } from "./physics";
 import { GameBehavior } from "./game";
-import { GRAVITY, PIXELS_PER_METER } from "./constants";
+import { PIXELS_PER_METER } from "./constants";
 
 class Game extends GameBehavior {
 	protected _particle = new Particle();
@@ -18,21 +18,13 @@ class Game extends GameBehavior {
 	}
 
 	public Update(): void {
-		this._particle.AddForce(
-			Vector2.MultiplyScalar(
-				Vector2.MultiplyScalar(GRAVITY, PIXELS_PER_METER),
-				this._particle.mass
-			)
-		);
+		const friction = Force.GenerateFrictionForce(this._particle, 3 * PIXELS_PER_METER);
+		this._particle.AddForce(friction);
 
-		if (this._particle.position.y < -200) {
-			const dragForce = Force.GenerateDragForce(this._particle, 0.04);
+		this._particle.Integrate(this._deltaTime);
+	}
 
-			this._particle.AddForce(dragForce);
-		}
-
-		this._particle.Integrate(this.deltaTime);
-
+	public AfterUpdate(): void {
 		Canvas.Circle(
 			this._particle.position,
 			5
