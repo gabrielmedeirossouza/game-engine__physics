@@ -1,9 +1,60 @@
 import { Vector2 } from '@/math';
+import { GRAVITATIONAL_FORCE } from '@/constants';
 import { Body } from './body';
 
-// TODO: Implement GenerateComplexDragForce and GenerateComplexFrictionForce to more precision and less performance
+// TODO: Implement GenerateComplexDragForce and GenerateComplexFrictionForce (more precision and less performance to calculate)
 
 export class Force {
+	public static GenerateSpringForce(body: Body, anchor: Vector2, restLength: number, k: number): Vector2 {
+		/**
+     * F = -k * x
+     *
+     * Notation:
+     *  - F: Force
+     *  - k: Coefficient of spring
+     *  - x: Delta length of spring considering the anchor point
+     */
+
+		const direction = Vector2.Subtract(body.position, anchor);
+
+		const displacement = direction.magnitude - restLength;
+
+		const springDirection = direction.normalized;
+
+		const springMagnitude = k * -1 * displacement;
+
+		const springForce = Vector2.MultiplyScalar(springDirection, springMagnitude);
+
+		return springForce;
+	}
+
+	public static GenerateGravitationalForce(bodyA: Body, bodyB: Body, G = GRAVITATIONAL_FORCE): Vector2 {
+		/**
+     * F = G * m1 * m2 / ||dm||² * d
+     *
+     *
+     * Notation:
+     *  - F: Gravitational force
+     *  - G: Gravitational constant
+     *  - m1: Mass of body A
+     *  - m2: Mass of body B
+     *  - dm: Distance between body A and body B (magnitude)
+     *  - d: Direction of distance between body A and body B (normalized)
+     */
+
+		const direction = Vector2.Subtract(bodyB.position, bodyA.position);
+
+		const distanceSquared = direction.magnitudeSquared;
+
+		const attractionDirection = direction.normalized;
+
+		const attractionMagnitude = G * bodyA.mass * bodyB.mass / distanceSquared;
+
+		const force = Vector2.MultiplyScalar(attractionDirection, attractionMagnitude);
+
+		return force;
+	}
+
 	public static GenerateImpulseForce(direction: Vector2, k: number): Vector2 {
 		/**
      * F = dp/dt

@@ -57,6 +57,7 @@
     "space-in-parens": ["error", "never"],
     "comma-spacing": "error",
     "unicorn/prevent-abbreviations": "off",
+    "unicorn/numeric-separators-style": "off",
     "unicorn/filename-case": [
       "error",
       {

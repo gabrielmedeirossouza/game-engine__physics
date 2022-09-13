@@ -1,3 +1,6 @@
+const FIXED_FRAME_RATE = 50;
+const FIXED_UPDATE = 1 / FIXED_FRAME_RATE;
+
 export abstract class GameBehavior {
 	protected _deltaTime = 0;
 
@@ -16,7 +19,8 @@ export abstract class GameBehavior {
 	public AfterUpdate?(): void;
 
 	private _Update(currentTime: number): void {
-		this._deltaTime = currentTime - this._oldTime;
+		const deltaTime = currentTime - this._oldTime;
+		this._deltaTime = deltaTime <= FIXED_UPDATE ? deltaTime : FIXED_UPDATE;
 		this._oldTime = currentTime;
 
 		this.BeforeUpdate?.();

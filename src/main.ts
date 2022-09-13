@@ -1,16 +1,23 @@
-// import { Vector2 } from "./math";
+import { Vector2 } from "./math";
 import { Canvas } from "./renderer";
 import { Particle, Force } from "./physics";
 import { GameBehavior } from "./game";
-import { PIXELS_PER_METER } from "./constants";
 
 class Game extends GameBehavior {
-	protected _particle = new Particle();
+	 public particleA = new Particle(new Vector2(0, 0));
+
+	 public anchor = Vector2.zero;
 
 	constructor() {
 		super();
 
-		this._particle.mass = 1;
+		this.particleA.mass = 1;
+
+		window.addEventListener('click', (event) => {
+			const halfWidth = window.innerWidth / 2;
+			const halfHeight = window.innerHeight / 2;
+			this.anchor = new Vector2(event.pageX - halfWidth, (event.pageY - halfHeight) * -1);
+		});
 	}
 
 	public BeforeUpdate(): void {
@@ -18,15 +25,21 @@ class Game extends GameBehavior {
 	}
 
 	public Update(): void {
-		const friction = Force.GenerateFrictionForce(this._particle, 3 * PIXELS_PER_METER);
-		this._particle.AddForce(friction);
+		const dragForce = Force.GenerateDragForce(this.particleA, 0.001);
+		this.particleA.AddForce(dragForce);
 
-		this._particle.Integrate(this._deltaTime);
+		const frictionForce = Force.GenerateFrictionForce(this.particleA, 100);
+		this.particleA.AddForce(frictionForce);
+
+		const springForce = Force.GenerateSpringForce(this.particleA, this.anchor, 0, 50);
+		this.particleA.AddForce(springForce);
+
+		this.particleA.Integrate(this._deltaTime);
 	}
 
 	public AfterUpdate(): void {
 		Canvas.Circle(
-			this._particle.position,
+			this.particleA.position,
 			5
 		);
 	}
