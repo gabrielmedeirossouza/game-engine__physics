@@ -68,8 +68,14 @@ export class Vector2 {
 		return new Vector2(a.y * -1, a.x);
 	}
 
-	public get magnitudeSquared(): number {
-		return this.magnitude ** 2;
+	public static Rotate(vector: Vector2, angle: number): Vector2 {
+		const cos = Math.cos(angle);
+		const sin = Math.sin(angle);
+
+		const x = vector.x * cos - vector.y * sin;
+		const y = vector.x * sin + vector.y * cos;
+
+		return new Vector2(x, y);
 	}
 
 	public get x(): number {
@@ -90,6 +96,10 @@ export class Vector2 {
 
 	public get magnitude(): number {
 		return Math.sqrt(this.x ** 2 + this.y ** 2);
+	}
+
+	public get magnitudeSquared(): number {
+		return this.x ** 2 + this.y ** 2;
 	}
 
 	public get normalized(): Vector2 {
@@ -141,11 +151,24 @@ export class Vector2 {
 		return this;
 	}
 
+	public Rotate(angle: number): Vector2 {
+		const cos = Math.cos(angle);
+		const sin = Math.sin(angle);
+
+		const x = this.x * cos - this.y * sin;
+		const y = this.x * sin + this.y * cos;
+
+		this._x = x;
+		this._y = y;
+
+		return this;
+	}
+
 	public Equals(other: Vector2): boolean {
 		return this.x === other.x && this.y === other.y;
 	}
 
-	public ToString(): string {
-		return `(${this.x}, ${this.y})`;
+	public ToString(fixed = 14): string {
+		return `(${this.x.toFixed(fixed)}, ${this.y.toFixed(fixed)})`;
 	}
 }

@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "strictPropertyInitialization": false,
+    "declaration": true,
     "target": "ES2022",
     "useDefineForClassFields": true,
     "module": "ES2022",

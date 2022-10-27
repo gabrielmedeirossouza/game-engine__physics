@@ -18,6 +18,8 @@ export abstract class GameBehavior {
 
 	public AfterUpdate?(): void;
 
+	public RendererUpdate?(): void;
+
 	private _Update(currentTime: number): void {
 		const deltaTime = currentTime - this._oldTime;
 		this._deltaTime = deltaTime <= FIXED_UPDATE ? deltaTime : FIXED_UPDATE;
@@ -26,6 +28,7 @@ export abstract class GameBehavior {
 		this.BeforeUpdate?.();
 		this.Update?.();
 		this.AfterUpdate?.();
+		this.RendererUpdate?.();
 
 		requestAnimationFrame((event) => this._Update(event / 1000));
 	}

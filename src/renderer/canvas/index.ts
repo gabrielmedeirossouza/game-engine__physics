@@ -2,7 +2,7 @@ import { Vector2 } from '@/math';
 
 import { Line } from './line';
 import { Clear } from './clear';
-import { Polygon } from './polygon';
+import { Box } from './box';
 import { Circle } from './circle';
 
 const COLORS_TYPE = {
@@ -26,7 +26,7 @@ export class Canvas {
 		new Line(origin, line, COLORS_TYPE.white);
 	}
 
-	public static Polygon(origin: Vector2, vertices: Vector2[]): void {
-		new Polygon(origin, vertices, COLORS_TYPE.white);
+	public static Box(vertices: Vector2[]): void {
+		new Box(vertices, COLORS_TYPE.white);
 	}
 }

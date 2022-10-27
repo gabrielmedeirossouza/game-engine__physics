@@ -58,6 +58,7 @@
     "comma-spacing": "error",
     "unicorn/prevent-abbreviations": "off",
     "unicorn/numeric-separators-style": "off",
+    "@typescript-eslint/no-namespace": "off",
     "unicorn/filename-case": [
       "error",
       {
