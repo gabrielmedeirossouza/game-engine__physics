@@ -10,6 +10,8 @@ import { PIXELS_PER_METER } from "./constants";
 class Game extends GameBehavior {
 	public bodies: Body[] = [];
 
+	public bodiesWithGravity: Body[] = [];
+
 	public anchor = Vector2.zero;
 
 	public rotation = 0;
@@ -17,19 +19,45 @@ class Game extends GameBehavior {
 	constructor() {
 		super();
 
-		const smallBall = new Body(new CircleShape(10), new Vector2(100, 100), 0, 1);
-		const bigBall = new Body(new CircleShape(50), new Vector2(200, 100), 0, 3);
+		const smallBall = new Body(new CircleShape(10), new Vector2(100, 100), 0);
+		const bigBall = new Body(new CircleShape(50), new Vector2(200, 100), 0, 0);
+		const bigBall2 = new Body(new CircleShape(50), new Vector2(290, 100), 0, 0);
+		const bigBall3 = new Body(new CircleShape(50), new Vector2(380, 100), 0, 30);
+
+		// console.log(bigBall.isStatic);
 		// const box = new Body(new BoxShape(100, 100), new Vector2(100, 100), 0, 3);
 
 		// bigBall.shape.
 
-		this.bodies.push(smallBall, bigBall);
+		this.bodies.push(smallBall, bigBall, bigBall2, bigBall3);
 
-		window.addEventListener('click', (event) => {
+		window.addEventListener('mousemove', (event) => {
 			const halfWidth = window.innerWidth / 2;
 			const halfHeight = window.innerHeight / 2;
-			this.anchor = new Vector2(event.pageX - halfWidth, (event.pageY - halfHeight) * -1);
+
+			const newBall = new Body(
+				new CircleShape(5),
+				new Vector2(event.pageX - halfWidth, (event.pageY - halfHeight) * -1),
+				0,
+				1,
+				0.5
+			);
+
+			this.bodiesWithGravity.push(newBall);
+			this.bodies.push(newBall);
 		});
+
+		for (let i = 0; i < 0; i++) {
+			const newBall = new Body(
+				new CircleShape(5),
+				new Vector2(Math.random() * 500, Math.random() * 150 + 500),
+				0,
+				10
+			);
+
+			this.bodiesWithGravity.push(newBall);
+			this.bodies.push(newBall);
+		}
 	}
 
 	public BeforeUpdate(): void {
@@ -37,6 +65,11 @@ class Game extends GameBehavior {
 	}
 
 	public Update(): void {
+		this.bodiesWithGravity.forEach((body) => {
+			const weight = Vector2.MultiplyScalar(Vector2.down, body.mass * 9.81 * PIXELS_PER_METER);
+			body.AddForce(weight);
+		});
+
 		this.bodies[0].AddTorque(this.rotation);
 
 		const dragForce = Force.GenerateDragForce(this.bodies[0], 0.001);
@@ -53,6 +86,25 @@ class Game extends GameBehavior {
 		this.bodies.forEach((body) => {
 			body.Update(this._deltaTime);
 		});
+
+		const newBodies = this.bodies.filter((body) => {
+			if (body.position.y > -1500) {
+				return true;
+			}
+
+			return false;
+		});
+
+		const newBodiesWithGravity = this.bodiesWithGravity.filter((body) => {
+			if (body.position.y > -1500) {
+				return true;
+			}
+
+			return false;
+		});
+
+		this.bodies = newBodies;
+		this.bodiesWithGravity = newBodiesWithGravity;
 	}
 
 	public RendererUpdate(): void {
@@ -67,8 +119,6 @@ class Game extends GameBehavior {
 					// CollisionResolution
 					contact.ResolveCollision();
 				}
-
-				console.log(contact);
 			}
 		}
 

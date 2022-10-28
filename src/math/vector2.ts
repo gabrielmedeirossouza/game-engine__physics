@@ -78,6 +78,10 @@ export class Vector2 {
 		return new Vector2(x, y);
 	}
 
+	public static Negate(vector: Vector2): Vector2 {
+		return new Vector2(vector.x * -1, vector.y * -1);
+	}
+
 	public get x(): number {
 		return this._x;
 	}
@@ -160,6 +164,13 @@ export class Vector2 {
 
 		this._x = x;
 		this._y = y;
+
+		return this;
+	}
+
+	public Negate(): Vector2 {
+		this._x *= -1;
+		this._y *= -1;
 
 		return this;
 	}

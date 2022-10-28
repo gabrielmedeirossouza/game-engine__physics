@@ -3,34 +3,54 @@ import { Shape } from './shape';
 import { BoxShape } from './box-shape';
 
 export class Body<TShape extends Shape = Shape> {
-	public mass: number;
+	private _isStatic: boolean;
 
-	protected _shape: TShape;
+	private _shape: TShape;
 
-	protected _position: Vector2;
+	private _position: Vector2;
 
-	protected _velocity = new Vector2(0, 0);
+	private _velocity = new Vector2(0, 0);
 
-	protected _acceleration = new Vector2(0, 0);
+	private _acceleration = new Vector2(0, 0);
+
+	private _mass: number;
+
+	private _inverseMass: number;
 
 	private _sumOfForces = Vector2.zero;
 
-	protected _rotation: number;
+	private _rotation: number;
 
-	protected _angularVelocity = 0;
+	private _angularVelocity = 0;
 
-	protected _angularAcceleration = 0;
+	private _angularAcceleration = 0;
 
-	protected _momentOfInertia: number;
+	private _momentOfInertia: number;
 
 	private _sumOfTorques = 0;
 
-	constructor(shape: TShape, position = Vector2.zero, rotation = 0, mass = 1) {
-		this._rotation = rotation;
+	private _restitution: number;
+
+	constructor(shape: TShape, position = Vector2.zero, rotation = 0, mass = 1, restitution = 1) {
 		this._shape = shape;
 		this._position = position;
-		this.mass = mass;
-		this._momentOfInertia = this._shape.GetMomentOfInertia(this.mass);
+		this._rotation = rotation;
+		this._mass = mass;
+		this._restitution = restitution;
+
+		if (this._mass <= 0.001) {
+			this._isStatic = true;
+			this._inverseMass = 0;
+		} else {
+			this._isStatic = false;
+			this._inverseMass = 1 / this._mass;
+		}
+
+		this._momentOfInertia = this._shape.GetMomentOfInertia(this._mass);
+	}
+
+	public get isStatic(): boolean {
+		return this._isStatic;
 	}
 
 	public get shape(): TShape {
@@ -49,12 +69,63 @@ export class Body<TShape extends Shape = Shape> {
 		return this._velocity;
 	}
 
+	public get mass(): number {
+		return this._mass;
+	}
+
+	public get inverseMass(): number {
+		return this._inverseMass;
+	}
+
 	public get acceleration(): Vector2 {
 		return this._acceleration;
 	}
 
 	public get rotation(): number {
 		return this._rotation;
+	}
+
+	public get restitution(): number {
+		return this._restitution;
+	}
+
+	public ApplyImpulse(impulse: Vector2): void {
+		/**
+		 * Impulse is an instantaneous change in velocity.
+		 *
+		 * Momentum (mass in motion) is the product of mass and velocity. Higher momentum means more difficult to change velocity.
+		 *
+		 * P = m * v
+		 *
+		 * Notation:
+		 * - P = momentum
+		 * - m = mass
+		 * - v = velocity
+		 *
+		 * Impulse is the change in momentum.
+		 *
+		 * J = deltaP = m * deltaV
+		 *
+		 * Notation:
+		 * - J = impulse
+		 * - deltaP = change in momentum
+		 * - m = mass
+		 * - deltaV = change in velocity
+		 *
+		 * The deltaV is the impulse divided by the mass.
+		 *
+		 * deltaV = J / m or deltaV = J * invM
+		 *
+		 * Notation:
+		 * - deltaV = change in velocity
+		 * - J = impulse
+		 * - m = mass
+		 * - invM = inverse mass
+		 */
+
+		if (this._isStatic) return;
+
+		this._velocity = Vector2.Add(this._velocity, Vector2.MultiplyScalar(impulse, this._inverseMass));
 	}
 
 	public AddForce(force: Vector2): void {
@@ -67,7 +138,9 @@ export class Body<TShape extends Shape = Shape> {
 
 	public IntegrateLinear(dt: number): void {
 		// Find the acceleration from the sum of forces and mass | a = F / m
-		this._acceleration = this._sumOfForces.DivideScalar(this.mass);
+		if (this._isStatic) return;
+
+		this._acceleration = Vector2.MultiplyScalar(this._sumOfForces, this._inverseMass);
 
 		// Euler Method - Integrate the acceleration to find new velocity in the next frame | v = v0 + a * dt
 		this._velocity.Add(Vector2.MultiplyScalar(this._acceleration, dt));
@@ -81,6 +154,8 @@ export class Body<TShape extends Shape = Shape> {
 
 	public IntegrateAngular(dt: number): void {
 		// Find the angular acceleration from the sum of torques and moment of inertia | alpha = T / I
+		if (this._isStatic) return;
+
 		this._angularAcceleration = this._sumOfTorques / this._momentOfInertia;
 
 		// Euler Method - Integrate the angular acceleration to find new angular velocity in the next frame | omega = omega0 + alpha * dt
