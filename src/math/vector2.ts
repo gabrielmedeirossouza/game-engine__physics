@@ -141,6 +141,30 @@ export class Vector2 {
 		return this;
 	}
 
+	public Dot(other: Vector2): number {
+		return this.x * other.x + this.y * other.y;
+	}
+
+	public PerpendicularClockwise(): Vector2 {
+		const x = this.y;
+		const y = this.x * -1;
+
+		this._x = x;
+		this._y = y;
+
+		return this;
+	}
+
+	public PerpendicularCounterClockwise(): Vector2 {
+		const x = this.y * -1;
+		const y = this.x;
+
+		this._x = x;
+		this._y = y;
+
+		return this;
+	}
+
 	public Divide(other: Vector2): Vector2 {
 		this._x /= other.x;
 		this._y /= other.y;

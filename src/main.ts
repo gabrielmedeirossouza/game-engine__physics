@@ -22,12 +22,7 @@ class Game extends GameBehavior {
 		const smallBall = new Body(new CircleShape(10), new Vector2(100, 100), 0);
 		const bigBall = new Body(new CircleShape(50), new Vector2(200, 100), 0, 0);
 		const bigBall2 = new Body(new CircleShape(50), new Vector2(290, 100), 0, 0);
-		const bigBall3 = new Body(new CircleShape(50), new Vector2(380, 100), 0, 30);
-
-		// console.log(bigBall.isStatic);
-		// const box = new Body(new BoxShape(100, 100), new Vector2(100, 100), 0, 3);
-
-		// bigBall.shape.
+		const bigBall3 = new Body(new CircleShape(50), new Vector2(380, 100), 0, 0);
 
 		this.bodies.push(smallBall, bigBall, bigBall2, bigBall3);
 
